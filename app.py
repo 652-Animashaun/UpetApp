@@ -35,6 +35,24 @@ def index():
 @app.route("/api/users/profiles", methods=['GET'])
 def get_users():
 	user_list = []
+	user_id={}
+
+	if request.args.get('id') != None:
+		
+		users=github_users.query.filter(github_users.git_id==int(request.args.get('id')))
+		for user in users:
+
+			user_id['username']= user.username
+			user_id['git_id']=user.git_id
+			user_id['avatar_url']=user.avatar_url
+			user_id['url']=user.url
+			user_id['type']=user.user_type
+
+		return jsonify({
+			'user':user_id
+			})
+	
+
 
 	if request.args.get('results_per_page') == 'None' or request.args.get('results_per_page') == None :
 		results_per_page=25
