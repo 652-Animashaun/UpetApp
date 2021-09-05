@@ -1,7 +1,7 @@
 import os
 import json
 from flask import Flask, session, render_template, request, jsonify, make_response, url_for
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine, exc, desc
 import json
 
 from models import *
@@ -51,7 +51,71 @@ def get_users():
 		return jsonify({
 			'user':user_id
 			})
-	
+
+
+	if request.args.get('username') != None:
+		users=github_users.query.filter(github_users.username==request.args.get('username'))
+		for user in users:
+
+			user_id['username']= user.username
+			user_id['git_id']=user.git_id
+			user_id['avatar_url']=user.avatar_url
+			user_id['url']=user.url
+			user_id['type']=user.user_type
+
+		return jsonify({
+			'user':user_id
+			})
+
+
+	if request.args.get('order_by') != None:
+		order_by=(request.args.get('order_by')).strip()
+		if order_by == 'git_id':
+			page = request.args.get('page', 1, type=int)
+			# users = session.query(github_users).order_by(desc(github_users.order_by)).paginate(page=page, per_page=results_per_page)
+			users=github_users.query.order_by(github_users.git_id).paginate(page=page, per_page=25)
+
+			for user in users.items:
+				user_dict={}
+				user_dict['username']= user.username
+				user_dict['git_id']=user.git_id
+				user_dict['avatar_url']=user.avatar_url
+				user_dict['url']=user.url
+				user_dict['type']=user.user_type
+				user_list.append(user_dict)
+
+			response = make_response(jsonify({
+				'users': user_list
+				}),
+			200,
+			)
+			response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 	
+			return response
+
+
+		elif order_by=='type':
+			page = request.args.get('page', 1, type=int)
+			users=github_users.query.order_by(desc(github_users.user_type)).paginate(page=page, per_page=25)
+			for user in users.items:
+				user_dict={}
+				user_dict['username']= user.username
+				user_dict['git_id']=user.git_id
+				user_dict['avatar_url']=user.avatar_url
+				user_dict['url']=user.url
+				user_dict['type']=user.user_type
+				user_list.append(user_dict)
+
+			response = make_response(jsonify({
+				'users': user_list
+				}),
+			200,
+			)
+			response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 	
+			return response
+		else:
+			return jsonify({
+				"Error": "You can only order_by git_id or type"
+				}), 401
 
 
 	if request.args.get('results_per_page') == 'None' or request.args.get('results_per_page') == None :
