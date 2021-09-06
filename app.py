@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, session, render_template, request, jsonify, make_response, url_for
 from sqlalchemy import create_engine, exc, desc
+from flask_migrate import Migrate
 import json
 
 from models import *
@@ -9,6 +10,7 @@ from models import *
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///github_users.db"
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 
@@ -47,13 +49,20 @@ def get_users():
 			user_id['avatar_url']=user.avatar_url
 			user_id['url']=user.url
 			user_id['type']=user.user_type
+		if len(user_id) >= 1:
 
-		return jsonify({
-			'user':user_id
-			})
+			return jsonify({
+				'user':user_id
+				})
+		else:
+			return jsonify({
+				"Error": "User does not exist in db"
+				}), 401
+
 
 
 	if request.args.get('username') != None:
+
 		users=github_users.query.filter(github_users.username==request.args.get('username'))
 		for user in users:
 
@@ -62,10 +71,16 @@ def get_users():
 			user_id['avatar_url']=user.avatar_url
 			user_id['url']=user.url
 			user_id['type']=user.user_type
+		if len(user_id) >= 1:
 
-		return jsonify({
-			'user':user_id
-			})
+			return jsonify({
+				'user':user_id
+				})
+		else:
+			return jsonify({
+				"Error": "User does not exist in db"
+				}), 401
+
 
 
 	if request.args.get('order_by') != None:
@@ -147,6 +162,5 @@ def get_users():
 	200,
 	)
 	response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 
-		
 	return response
 
