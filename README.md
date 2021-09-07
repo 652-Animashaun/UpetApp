@@ -16,11 +16,16 @@ $ pip install -r requirements.txt
 
 # Initialize Seed.py
 
- This script executes an API call to endpoint https://api.github.com/users 
- By default, it only gets the first 150 users.
- It can take a shell command parameter $ py seed.py -t <number>. Which changes default above
- Uncomment DB creation block of code to create and insert git_id, username, avatar_url, user_type, URL to an SQLite DB.
- Or just uncomment print(f"") statement to simulate DB insert
+This script executes an API call to endpoint https://api.github.com/users 
+By default, it only gets the first 150 users.
+It can take a shell command parameter $ py seed.py -t <number>. Which changes default above
+Uncomment DB creation block of code to create and insert to an SQLite DB.
+- git_id, 
+- username, 
+- avatar_url, 
+- user_type, 
+- URL 
+Or just uncomment print(f"") statement to simulate DB insert
 
 # Starting the UpetApp localhost
 
@@ -53,11 +58,11 @@ Note the DB is not populated yet, see seed.py below.
 The API endpoint is 'localhost:5000/api/users/profiles'
 It takes a GET request 
 Can take one of the following query parameters:
-	localhost:5000/api/users/profiles?page=<page>
-	localhost:5000/api/users/profiles?result_per_page=<pagination>
-	localhost:5000/api/users/profiles?order_by=<git_id|type>
-	localhost:5000/api/users/profiles?username=<term>
-	localhost:5000/api/users/profiles?id=<id>
+- localhost:5000/api/users/profiles?page=<page>
+- localhost:5000/api/users/profiles?result_per_page=<pagination>
+- localhost:5000/api/users/profiles?order_by=<git_id|type>
+- localhost:5000/api/users/profiles?username=<term>
+- localhost:5000/api/users/profiles?id=<id>
 
 To transverse the list of result pages in a RESTful way,  get nextpage link using response.headers['nextpage']
 If no pagination value is given, the api uses default 25.
@@ -65,6 +70,8 @@ If no pagination value is given, the api uses default 25.
 
 # Unittest
 
+The test functions lives in api_test_pagination.py
+The unit_t.py module contains test case classes
 Run unit tests by executing the command
 $ Python unit_t.py
 
