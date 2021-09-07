@@ -12,19 +12,32 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///github_users.db"
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+page_pagination = []
 
-
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
 
-	### the query string ?result_per_page takes an int arg, can be passed through url
-	if request.args.get('results_per_page') is not None:
+	
 
+	if request.method == 'POST':
+		if len(page_pagination) > 0:
+			page_pagination.pop()
+		results_per_page=int(request.form.get('results_per_page'))
+		page_pagination.append(results_per_page)
+
+
+	### the query string ?result_per_page takes an int arg, can be passed through url
+
+	elif request.args.get('results_per_page') is not None:
 		results_per_page=int(request.args.get('results_per_page'))
+
+	elif len(page_pagination) > 0:
+		results_per_page=page_pagination[-1]
+
 	else:
 	### if result_per_page isnt given, use default 25
 		results_per_page=25
-	# Set the pagination configuration
+		# Set the pagination configuration
 	page = request.args.get('page', 1, type=int)
 
 	users=github_users.query.paginate(page=page, per_page=results_per_page)

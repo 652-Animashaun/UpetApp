@@ -13,6 +13,13 @@
       <div class= "col-sm-12 col-lg-12">
         <h1 class="text-center">GITHUB USERS</h1>
       </div>
+      <div class= "col-sm-12 col-lg-12">
+        <form class="form-group" action="/" method="post">
+          
+          <input type="number" name="results_per_page" id="pagination" placeholder="users displayed per page">
+          <input type="submit" name="submit" class="btn btn-sm btn-dark">
+        </form>
+      </div>
   {% for user in users.items %}
   <div class="col-sm-12 col-lg-4" style="margin-bottom: 2rem;">
   <div class="card" style="width: 18rem;">
