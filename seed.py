@@ -26,7 +26,7 @@ from app import db
 # 	except Error as e:
 # 		print(e)
 
-# 	return conn]
+# 	return conn
 
 class github_users(db.Model):
     __tablename__="github_users"
@@ -43,7 +43,7 @@ def get_users(args):
 	url = "https://api.github.com/users"
 
 	# if shell arguments is not given get first 150 profiles
-	if args.total is None:
+	if args is None:
 		quotient = 150//100
 		mod =150%100
 		compiled = getNext(url, mod=mod, quotient=quotient)
@@ -52,7 +52,7 @@ def get_users(args):
 	# if the shell parameter is given
 	######
 	else:
-		n = int(args.total)
+		n = int(args)
 		quotient = n//100
 		mod =n%100
 		compiled = getNext(url, mod=mod, quotient=quotient)
@@ -127,14 +127,15 @@ def main():
 	parser = argparse.ArgumentParser(description='Dark lane demo tapes')
 	parser.add_argument('-t','--total', help='specify the number of users to seed',required=False)
 	args = parser.parse_args()
+	args = args.total
 
 	total_users = get_users(args)
 
 
 	
-	### uncomment below lines and set path to sqlite db to insert results
+	### if using execute, uncomment below lines and set path to sqlite db to insert results
 
-	# database = r"C:\Users\Muizz\Desktop\umba_test\UpetApp\github_users.db"
+	# database = r"github_users.db"
 	# connect = create_connection(database)
 	# c = connect.cursor()
 	# c.execute("CREATE TABLE IF NOT EXISTS github_users(id integer PRIMARY KEY, git_id integer NOT NULL, username varchar NOT NULL, avatar_url varchar NOT NULL, type varchar NOT NULL, url varchar NOT NULL)")
@@ -154,6 +155,7 @@ def main():
 			db.session.add(user)
 			db.session.commit()
 
+			### Or uncomment to use execute statment
 
 			# c.execute("INSERT INTO github_users (username, git_id, avatar_url, type, url) VALUES (:username, :git_id, :avatar_url, :user_type, :url)",
 			# 	{"username": user['login'], "git_id": git_id, "avatar_url":user['avatar_url'], "user_type": user['type'], "url": user['url']})

@@ -3,15 +3,16 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<nav>
-  <h1>GITHUB USERS</h1>
-</nav>
+
 <section class="content">
   <header>
     {% block header %}{% endblock %}
   </header>
   <div class="container">
   	<div class="row">
+      <div class= "col-sm-12 col-lg-12">
+        <h1 class="text-center">GITHUB USERS</h1>
+      </div>
   {% for user in users.items %}
   <div class="col-sm-12 col-lg-4" style="margin-bottom: 2rem;">
   <div class="card" style="width: 18rem;">
