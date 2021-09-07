@@ -28,7 +28,6 @@ def index():
 	page = request.args.get('page', 1, type=int)
 
 	users=github_users.query.paginate(page=page, per_page=results_per_page)
-	print(users)
 	return render_template('index.html', users=users)
 
 
@@ -38,6 +37,8 @@ def index():
 def get_users():
 	user_list = []
 	user_id={}
+
+	# filter by id
 
 	if request.args.get('id') != None:
 		
@@ -60,7 +61,7 @@ def get_users():
 				}), 401
 
 
-
+	# filter by username
 	if request.args.get('username') != None:
 
 		users=github_users.query.filter(github_users.username==request.args.get('username'))
@@ -82,12 +83,11 @@ def get_users():
 				}), 401
 
 
-
+	# order by git_id | type
 	if request.args.get('order_by') != None:
 		order_by=(request.args.get('order_by')).strip()
 		if order_by == 'git_id':
 			page = request.args.get('page', 1, type=int)
-			# users = session.query(github_users).order_by(desc(github_users.order_by)).paginate(page=page, per_page=results_per_page)
 			users=github_users.query.order_by(github_users.git_id).paginate(page=page, per_page=25)
 
 			for user in users.items:
@@ -104,8 +104,10 @@ def get_users():
 				}),
 			200,
 			)
-			response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 	
+			response.headers["nextpage"] = url_for('index', page=users.next_num, results_per_page=request.args.get('results_per_page'))
+			 	
 			return response
+			
 
 
 		elif order_by=='type':
@@ -125,7 +127,8 @@ def get_users():
 				}),
 			200,
 			)
-			response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 	
+			response.headers["nextpage"] = url_for('index', page=users.next_num, results_per_page=request.args.get('results_per_page'))
+			 	
 			return response
 		else:
 			return jsonify({
@@ -161,6 +164,7 @@ def get_users():
 		}),
 	200,
 	)
-	response.headers["nextpage"] = f"http://127.0.0.1:5000/api/users/profiles?page={users.next_num}&results_per_page={request.args.get('results_per_page')}" 
+	response.headers["nextpage"] = url_for('index', page=users.next_num, results_per_page=request.args.get('results_per_page'))
+
 	return response
 
